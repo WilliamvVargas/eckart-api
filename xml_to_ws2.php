@@ -1,5 +1,7 @@
 <?php
 
+
+
   // Definir encabezados para permitir solicitudes desde cualquier origen (CORS)
   header("Access-Control-Allow-Origin: *");
   header("Content-Type: application/json");
@@ -39,6 +41,14 @@
 
     $authHeader = "Authorization: Basic " . base64_encode("$username:$password");
 
+
+    // Convertir el XML en un JSON válido
+    $jsonData = json_encode(["xml" => $xmlData], JSON_HEX_QUOT);
+    $data = json_decode($jsonData, true);
+
+    // Obtener el XML como string con comillas escapadas
+    $xmlDataFormateado = json_encode($data["xml"]);
+
     curl_setopt_array($curl, array(
       CURLOPT_URL => 'http://201.236.140.195:8030/pilo/rest/piloService/ocsqad',
       CURLOPT_RETURNTRANSFER => true,
@@ -48,7 +58,7 @@
       CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
       CURLOPT_CUSTOMREQUEST => 'POST',
-      CURLOPT_POSTFIELDS =>'xmldata='.$xmlData,
+      CURLOPT_POSTFIELDS =>'xmldata='.$xmlDataFormateado,
       CURLOPT_HTTPHEADER => array(
         'Content-Type: application/x-www-form-urlencoded',
         $authHeader
